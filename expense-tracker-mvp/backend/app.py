@@ -102,6 +102,7 @@ def upload_receipt():
             'date': parsed_data['date'],
             'items': parsed_data['items'],
             'total': parsed_data['total'],
+            'currency': parsed_data.get('currency', 'USD'),  # Store currency
             'ocr_text': ocr_text  # Store raw OCR for debugging
         }
 
@@ -138,6 +139,7 @@ def get_receipts():
                 'store': r['store'],
                 'date': r['date'],
                 'total': r['total'],
+                'currency': r.get('currency', 'USD'),
                 'uploaded_at': r['uploaded_at'],
                 'item_count': len(r.get('items', []))
             }
@@ -233,5 +235,5 @@ def get_monthly_stats():
 
 if __name__ == '__main__':
     print("Starting Expense Tracker API...")
-    print("Server running on http://localhost:5000")
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    print("Server running on http://localhost:5001")
+    app.run(debug=True, host='0.0.0.0', port=5001)

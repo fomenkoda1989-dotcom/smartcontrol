@@ -20,9 +20,9 @@ A Flutter Web application for personal expense tracking based on receipt photos.
 - **File Picker**: Image upload support
 
 ### Backend
-- **Flask**: Python web framework
-- **Flask-CORS**: Cross-origin resource sharing
-- **Pillow**: Image processing
+- **Flask 3.1.0**: Python web framework
+- **Flask-CORS 5.0.0**: Cross-origin resource sharing
+- **Pillow 11.0.0**: Image processing (Python 3.13 compatible)
 - **JSON Storage**: Simple file-based data persistence
 
 ## Project Structure
@@ -74,7 +74,7 @@ GET  /stats/month            - Get current month statistics
 
 **POST /receipt/upload**
 ```bash
-curl -X POST http://localhost:5000/receipt/upload \
+curl -X POST http://localhost:5001/receipt/upload \
   -F "file=@receipt.jpg"
 ```
 
@@ -122,11 +122,13 @@ Response:
 
 ### Prerequisites
 
-- **Python 3.8+**: Backend runtime
+- **Python 3.13+**: Backend runtime
 - **Flutter 3.0+**: Frontend framework
 - **Git**: Version control
 
 ### Backend Setup
+
+> **Note**: This project requires Python 3.13+ and uses updated package versions (Flask 3.1.0, Pillow 11.0.0) for compatibility. On macOS/Linux, use `python3` and `pip3` commands.
 
 1. Navigate to backend directory:
 ```bash
@@ -135,7 +137,7 @@ cd expense-tracker-mvp/backend
 
 2. Create virtual environment (recommended):
 ```bash
-python -m venv venv
+python3 -m venv venv
 
 # On macOS/Linux:
 source venv/bin/activate
@@ -146,15 +148,25 @@ venv\Scripts\activate
 
 3. Install dependencies:
 ```bash
+# On macOS/Linux:
+pip3 install -r requirements.txt
+
+# On Windows:
 pip install -r requirements.txt
 ```
 
 4. Run the server:
 ```bash
+# On macOS/Linux:
+python3 app.py
+
+# On Windows:
 python app.py
 ```
 
-The backend will start on `http://localhost:5000`
+The backend will start on `http://localhost:5001`
+
+> **Note**: Changed from default port 5000 to 5001 to avoid conflicts with macOS AirPlay Receiver
 
 ### Frontend Setup
 
@@ -182,7 +194,7 @@ The frontend will open in Chrome at `http://localhost:port`
 
 ## Usage
 
-1. **Start Backend**: Run `python app.py` in the backend directory
+1. **Start Backend**: Run `python3 app.py` (or `python app.py` on Windows) in the backend directory
 2. **Start Frontend**: Run `flutter run -d chrome` in the frontend directory
 3. **Upload Receipt**: Click "Upload Receipt" and select an image
 4. **View Receipts**: Navigate to "My Receipts" to see all uploads
@@ -299,7 +311,7 @@ Edit [frontend/lib/services/api_service.dart](frontend/lib/services/api_service.
 
 ```dart
 // Change backend URL
-static const String baseUrl = 'http://localhost:5000';
+static const String baseUrl = 'http://localhost:5001';
 ```
 
 For production, update this to your deployed backend URL.
@@ -350,17 +362,38 @@ For production, update this to your deployed backend URL.
 
 **Port already in use**:
 ```bash
-# Kill process on port 5000 (macOS/Linux)
-lsof -ti:5000 | xargs kill -9
+# By default, the app uses port 5001 to avoid conflicts with macOS AirPlay Receiver (port 5000)
 
-# Or change port in app.py:
-app.run(port=5001)
+# Check what's using a port (macOS/Linux):
+lsof -i :5001
+
+# Kill process on port (if needed):
+lsof -ti:5001 | xargs kill -9
+
+# To disable AirPlay Receiver on macOS:
+# System Settings → AirDrop & Handoff → AirPlay Receiver → Off
+
+# Or change port in app.py to another port:
+app.run(port=8000)
 ```
 
 **Module not found**:
 ```bash
 # Reinstall dependencies
+# On macOS/Linux:
+pip3 install -r requirements.txt
+
+# On Windows:
 pip install -r requirements.txt
+```
+
+**pip command not found (macOS/Linux)**:
+```bash
+# Use pip3 instead of pip
+pip3 install -r requirements.txt
+
+# Or update pip (optional)
+pip3 install --upgrade pip
 ```
 
 **CORS errors**:
@@ -389,7 +422,7 @@ flutter config --enable-web
 ```
 
 **API connection failed**:
-- Ensure backend is running on port 5000
+- Ensure backend is running on port 5001
 - Check browser console for CORS errors
 - Verify API URL in [api_service.dart](frontend/lib/services/api_service.dart)
 

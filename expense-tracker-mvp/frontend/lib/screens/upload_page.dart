@@ -241,7 +241,7 @@ class _UploadPageState extends State<UploadPage> {
             ),
             const SizedBox(height: 4),
             Text('Date: ${receipt.date}'),
-            Text('Total: \$${receipt.total}'),
+            Text('Total: ${receipt.currencySymbol}${receipt.total}'),
             Text('Items: ${receipt.itemCount ?? 0}'),
           ],
         ),

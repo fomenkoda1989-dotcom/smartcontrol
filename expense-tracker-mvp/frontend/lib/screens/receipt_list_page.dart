@@ -239,7 +239,7 @@ class _ReceiptListPageState extends State<ReceiptListPage> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '\$${receipt.total}',
+                    '${receipt.currencySymbol}${receipt.total}',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,

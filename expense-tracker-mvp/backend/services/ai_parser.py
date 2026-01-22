@@ -51,7 +51,8 @@ class AIParser:
                     "store": str,
                     "date": str (ISO format),
                     "items": [{"name": str, "price": str, "category": str}],
-                    "total": str
+                    "total": str,
+                    "currency": str
                 }
         """
         # MOCK IMPLEMENTATION
@@ -66,6 +67,9 @@ class AIParser:
         # Extract date
         date_str = self._extract_date(ocr_text)
 
+        # Extract currency
+        currency = self._extract_currency(ocr_text)
+
         # Extract items
         items = self._extract_items(ocr_text)
 
@@ -76,7 +80,8 @@ class AIParser:
             "store": store,
             "date": date_str,
             "items": items,
-            "total": total
+            "total": total,
+            "currency": currency
         }
 
     def _extract_date(self, text):
@@ -102,8 +107,9 @@ class AIParser:
         items = []
 
         # Look for lines with item name and price
-        # Pattern: text followed by price like $12.34
-        item_pattern = r'(.+?)\s+\$(\d+\.\d{2})'
+        # Pattern: text followed by price in various formats:
+        # $12.34, €12,34, 12.34, 12,34
+        item_pattern = r'(.+?)\s+(?:[\$€£¥]?\s*)?(\d+[.,]\d{2})\s*(?:[\$€£¥])?'
 
         lines = text.split('\n')
         for line in lines:
@@ -112,8 +118,11 @@ class AIParser:
                 item_name = match.group(1).strip()
                 price = match.group(2)
 
+                # Normalize price format (convert comma to dot)
+                price = self._normalize_price(price)
+
                 # Skip lines that are totals
-                if any(keyword in item_name.lower() for keyword in ['subtotal', 'total', 'tax']):
+                if any(keyword in item_name.lower() for keyword in ['subtotal', 'total', 'tax', 'suma', 'importe']):
                     continue
 
                 # Categorize item
@@ -129,14 +138,46 @@ class AIParser:
 
     def _extract_total(self, text):
         """Extract total amount from receipt."""
-        # Look for total line
-        total_pattern = r'Total:\s*\$(\d+\.\d{2})'
-        match = re.search(total_pattern, text)
+        # Look for total line in multiple formats
+        # Patterns: Total: $12.34, TOTAL (€) 12,34, Total 12.34
+        total_patterns = [
+            r'[Tt][Oo][Tt][Aa][Ll]\s*(?:\([€\$£¥]\))?\s*(?:[€\$£¥])?\s*(\d+[.,]\d{2})',
+            r'[Ss][Uu][Mm][Aa]\s*(?:\([€\$£¥]\))?\s*(?:[€\$£¥])?\s*(\d+[.,]\d{2})',
+            r'[Ii][Mm][Pp][Oo][Rr][Tt][Ee]\s*(?:\([€\$£¥]\))?\s*(?:[€\$£¥])?\s*(\d+[.,]\d{2})',
+        ]
 
-        if match:
-            return match.group(1)
+        for pattern in total_patterns:
+            match = re.search(pattern, text)
+            if match:
+                price = match.group(1)
+                return self._normalize_price(price)
 
         return "0.00"
+
+    def _normalize_price(self, price_str):
+        """Normalize price format by converting comma to dot."""
+        # Replace comma with dot for decimal separator
+        return price_str.replace(',', '.')
+
+    def _extract_currency(self, text):
+        """Detect currency from receipt text."""
+        # Check for currency symbols
+        if '€' in text or 'EUR' in text.upper():
+            return 'EUR'
+        elif '£' in text or 'GBP' in text.upper():
+            return 'GBP'
+        elif '¥' in text or 'JPY' in text.upper() or 'CNY' in text.upper():
+            return 'JPY'
+        elif '$' in text:
+            # Could be USD, CAD, AUD, etc. Default to USD
+            return 'USD'
+
+        # Default to EUR for comma-based decimal separators
+        # (common in Europe)
+        if re.search(r'\d+,\d{2}', text):
+            return 'EUR'
+
+        return 'USD'  # Default fallback
 
     def _categorize_item(self, item_name):
         """

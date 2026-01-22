@@ -4,6 +4,7 @@ class Receipt {
   final String store;
   final String date;
   final String total;
+  final String currency;
   final String uploadedAt;
   final int? itemCount;
   final List<ReceiptItem>? items;
@@ -13,6 +14,7 @@ class Receipt {
     required this.store,
     required this.date,
     required this.total,
+    this.currency = 'USD',
     required this.uploadedAt,
     this.itemCount,
     this.items,
@@ -25,6 +27,7 @@ class Receipt {
       store: json['store'] as String,
       date: json['date'] as String,
       total: json['total'] as String,
+      currency: json['currency'] as String? ?? 'USD',
       uploadedAt: json['uploaded_at'] as String,
       itemCount: json['item_count'] as int?,
       items: null, // Items not included in list response
@@ -43,10 +46,26 @@ class Receipt {
       store: json['store'] as String,
       date: json['date'] as String,
       total: json['total'] as String,
+      currency: json['currency'] as String? ?? 'USD',
       uploadedAt: json['uploaded_at'] as String,
       itemCount: items.length,
       items: items,
     );
+  }
+
+  /// Get currency symbol based on currency code
+  String get currencySymbol {
+    switch (currency) {
+      case 'EUR':
+        return '€';
+      case 'GBP':
+        return '£';
+      case 'JPY':
+        return '¥';
+      case 'USD':
+      default:
+        return '\$';
+    }
   }
 }
 

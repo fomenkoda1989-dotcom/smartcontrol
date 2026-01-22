@@ -296,7 +296,7 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
 
           // Price
           Text(
-            '\$${item.price}',
+            '${_receipt!.currencySymbol}${item.price}',
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -323,7 +323,7 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
               ),
             ),
             Text(
-              '\$${_receipt!.total}',
+              '${_receipt!.currencySymbol}${_receipt!.total}',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,

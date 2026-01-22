@@ -8,7 +8,7 @@ import '../models/monthly_stats.dart';
 class ApiService {
   // Backend API base URL
   // Change this to your backend server address
-  static const String baseUrl = 'http://localhost:5000';
+  static const String baseUrl = 'http://localhost:5001';
 
   /// Upload a receipt image file
   ///
