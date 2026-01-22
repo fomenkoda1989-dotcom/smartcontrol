@@ -1,0 +1,28 @@
+# Flutter/Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+
+# Web specific
+web/flutter.js
+
+# IDE
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+.DS_Store
+
+# Generated files
+*.g.dart
+*.freezed.dart
+
+# Misc
+*.log
+*.swp
+*.swo

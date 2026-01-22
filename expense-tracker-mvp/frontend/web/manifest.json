@@ -1,0 +1,11 @@
+{
+    "name": "Expense Tracker",
+    "short_name": "Expenses",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#0175C2",
+    "theme_color": "#0175C2",
+    "description": "Track your expenses from receipt photos",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false
+}
